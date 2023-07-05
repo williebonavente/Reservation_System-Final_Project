@@ -48,7 +48,7 @@ Develop a seat reservation system in C with the following features:
 |      |      |      |      |     |
 | ---- | ---- | ---- | ---- | --- |
 
-**f** If the user has selected a seat already occupied, the system will prompt the user the message `Seat already occupied, would you like to continue (Y/N)`. 
+**f** If the user has selected a seat already occupied, the system will prompt the user the message `Seat already occupied, would you like to continue (Y/N)`.
 If the yes the system will ask for another seat number, if no, the system will display main menu.
 
 **g.** The system will ask the following information of the passenger.
