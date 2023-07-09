@@ -34,6 +34,9 @@
         "sortme.h": "c",
         "*.php": "php",
         "string.h": "c",
-        "stdbool.h": "c"
+        "stdbool.h": "c",
+        "stdlib.h": "c",
+        "corecrt.h": "c",
+        "unistd.h": "c"
     }
 }
