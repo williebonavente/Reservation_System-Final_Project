@@ -30,22 +30,26 @@ Develop a seat reservation system in C with the following features:
 |      |      |      |      |     |
 | 2    | A    | B    | C    | D   |
 | 3    | A    | B    | C    | D   |
-|      |      |      |      |
+|      |      |      |      |     |
 | 4    | A    | B    | C    | D   |
 |      |      |      |      |     |
+| 5    |  A   | B    |  C   | D   |
+|      |      |      |      |     |  
 | ---- | ---- | ---- | ---- | --- |
 
-**e.** Seats can be reserved by choosing a number and a letter. If the reserved successfully, `X` mark will replace the letter as shown below.
+sing a number and a letter. If the reserved successfully, `X` mark will replace the letter as shown below.
 
 |      |      |      |      |     |
 | ---- | ---- | ---- | ---- | --- |
 | 1    | X    | B    | C    | D   |
 |      |      |      |      |     |
-| 2    | A    | B    | C    | D   |
-| 3    | A    | B    | C    | D   |
-|      |      |      |      |
-| 4    | A    | B    | C    | D   |
+| 2    | X    | B    | C    | D   |
+| 3    | X    | B    | C    | D   |
 |      |      |      |      |     |
+| 4    | X    | B    | C    | D   |
+|      |      |      |      |     |
+| 5    |  X   | B    |  C   | D   |
+|      |      |      |      |     |  
 | ---- | ---- | ---- | ---- | --- |
 
 **f** If the user has selected a seat already occupied, the system will prompt the user the message `Seat already occupied, would you like to continue (Y/N)`.
