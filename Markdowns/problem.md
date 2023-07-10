@@ -37,7 +37,7 @@ Develop a seat reservation system in C with the following features:
 |      |      |      |      |     |  
 | ---- | ---- | ---- | ---- | --- |
 
-sing a number and a letter. If the reserved successfully, `X` mark will replace the letter as shown below.
+**e.** sign a number and a letter. If the reserved successfully, `X` mark will replace the letter as shown below.
 
 |      |      |      |      |     |
 | ---- | ---- | ---- | ---- | --- |
