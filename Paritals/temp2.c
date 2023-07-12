@@ -38,7 +38,7 @@ void addPassenger(Seat ***seats, const char *filename);
 bool isSeatValid(int row, char col);
 void assignSeat(Seat ***seats, const char *name, int age, const char *address, int row, char col);
 void displaySeats(const Seat ***seats, const char *filename);
-void writeToFile(const char *filename, const Seat ***seats);
+void writeToFile(const char *filename, Seat ***seats);
 void readFromFile(const char *filename, Seat ***seats);
 
 // Step 3  / Case 3
@@ -244,7 +244,7 @@ void addPassenger(Seat ***seats, const char *filename)
         scanf(" %c", &another);
     } while (another == 'Y' || another == 'y');
 }
-void writeToFile(const char *filename, const Seat ***seats)
+void writeToFile(const char *filename, Seat ***seats)
 {
     // Write the seat assignments to a file
     FILE *file = fopen(filename, "w");
