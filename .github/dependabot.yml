@@ -5,7 +5,7 @@
 
 version: 2
 updates:
-  - package-ecosystem: "no-package"
+  - package-ecosystem: "gitsubmodule"
     directory: "/"
     schedule:
       interval: "weekly"
