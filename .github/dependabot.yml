@@ -5,7 +5,7 @@
 
 version: 2
 updates:
-  - package-ecosystem: "" # See documentation for possible values
-    directory: "/Paritals" # Location of package manifests
+  - package-ecosystem: "no-package"
+    directory: "/"
     schedule:
       interval: "weekly"
