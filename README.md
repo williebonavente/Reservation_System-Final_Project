@@ -41,22 +41,20 @@ The following example illustrates a seat map before and after reservations:
 
 Before Reservations:
 
-``` Example 1
-      A    B    C    D  
-1                   
-2
-3
-4
+``` Example 1  
+1     A    B    C    D  
+2     A    B    C    D
+3     A    B    C    D
+4     A    B    C    D
 ```
 
 After Reserving Seat 1A and 2B:
 
 ``` Example 2
-      A    B    C    D  
-1    X         
-2         X  
-3
-4
+1     X    B    C    D 
+2     A    X    C    D 
+3     A    B    C    D
+4     A    B    C    D
 ```
 
 ## Example Report - List of Passengers
