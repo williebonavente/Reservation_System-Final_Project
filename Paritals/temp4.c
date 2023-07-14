@@ -80,11 +80,13 @@ int main()
     {
         loadingScreen();
         do
-
-        { // Step 1: Display the Menu first.
+        {
+            // Step 1: Display the Menu first.
+            clearScreen();
             showMenu();
             printf("\t\nEnter your choice >> ");
             scanf("%i", &choice);
+
             switch (choice)
             {
             case 1:
@@ -120,10 +122,12 @@ int main()
                 exit(1);
                 break;
             default:
-                break;
+                clearScreen();
+                printf("\n\t\t\tError! Please select a valid option.\t\t\n");
+                printf("\n");
             }
 
-            printf("\n\t\tReturn to Main Menu (Press 'Y') >> ");
+            printf("\n\tReturn to Main Menu (Press 'Y') >> ");
             scanf(" %c", &another);
             clearScreen();
         } while (another == 'Y' || another == 'y');
@@ -135,7 +139,7 @@ int main()
         printf("\n");
         printf("\t\tInvalid password. Login failed.\n");
     }
-    
+
     // Program Existing.
     printf("\n\t\t\tProgram Existing in\n");
     loadingScreen();
@@ -611,6 +615,8 @@ void modifySeat(Seat ***seats, int fromRow, char fromCol, int toRow, char toCol)
 
 void cancelReservation(Seat ***seats, const char *filename)
 {
+    displaySeats(seats);
+
     int row;
     char col;
 
