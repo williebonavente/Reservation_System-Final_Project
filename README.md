@@ -71,6 +71,7 @@ Passenger Name   Age    Address    Seat No.
 3. Luke         20      Pasay       1C
 4. Mark         19      Valenzuela  1D
 5. Silas        21      Malabon     5A
+6. Jan          20      Balintawak  5D 
 ```
 
 ## License
