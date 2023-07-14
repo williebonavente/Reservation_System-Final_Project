@@ -1,5 +1,3 @@
-/* Implementing the very well-known binary search */
-
 /**
  * @file
  * @brief Program to perform [binary
@@ -9,9 +7,8 @@
  * algorithm
  * @authors [Krishna Vedala](https://github.com/kvedala) - iterative algorithm
  */
-
-#include <stdio.h>
 #include <assert.h>
+#include <stdio.h>
 
 /** Recursive implementation
  * \param[in] arr array to search
@@ -21,30 +18,9 @@
  * \returns location of x assuming array arr[l..r] is present
  * \returns -1 otherwise
  */
-int binarySearch1(const int *arr, int l, int r, int x);
-
-// Iterative Implementation
-/** Iterative implementation
- * \param[in] arr array to search
- * \param l left index of search range
- * \param r right index of search range
- * \param x target value to search for
- * \returns location of x assuming array arr[l..r] is present
- * \returns -1 otherwise
- */
-int binarySearch2(const int *arr, int l, int r, int x);
-
-/** Test implementations **/
-void test();
-int main(void)
+int binarysearch1(const int *arr, int l, int r, int x)
 {
-    test();
-    return 0;
-}
-
-int binarySearch1(const int *arr, int l, int r, int x)
-{
-    if (r >= 1)
+    if (r >= l)
     {
         int mid = l + (r - l) / 2;
 
@@ -54,18 +30,25 @@ int binarySearch1(const int *arr, int l, int r, int x)
 
         // If element is smaller than middle
         if (arr[mid] > x)
-            return binarySearch1(arr, l, mid - 1, x);
+            return binarysearch1(arr, l, mid - 1, x);
 
-        // Else statement is in right subarray
-        return binarySearch1(arr, mid + l, r, x);
+        // Else element is in right subarray
+        return binarysearch1(arr, mid + 1, r, x);
     }
 
     // When element is not present in array
-
     return -1;
 }
 
-int binarySearch2(const int *arr, int l, int r, int x)
+/** Iterative implementation
+ * \param[in] arr array to search
+ * \param l left index of search range
+ * \param r right index of search range
+ * \param x target value to search for
+ * \returns location of x assuming array arr[l..r] is present
+ * \returns -1 otherwise
+ */
+int binarysearch2(const int *arr, int l, int r, int x)
 {
     int mid = l + (r - l) / 2;
 
@@ -80,38 +63,47 @@ int binarySearch2(const int *arr, int l, int r, int x)
         else
             // Else element is in right subarray
             l = mid + 1;
+
         mid = l + (r - l) / 2;
     }
 
-    // When element is not present in array.
+    // When element is not present in array
     return mid;
 }
 
+/** Test implementations */
 void test()
 {
     // give function an array to work with
     int arr[] = {2, 3, 4, 10, 40};
-    // get the size of array
-    int n = sizeof(arr)/ sizeof(arr[0]);
+    // get size of array
+    int n = sizeof(arr) / sizeof(arr[0]);
 
-    printf("Test 1...");
+    printf("Test 1.... ");
     // set value to look for
     int x = 10;
     // set result to what is returned from binarysearch
-    int result = binarySearch1(arr, 0,  n- 1, x);
+    int result = binarysearch1(arr, 0, n - 1, x);
     assert(result == 3);
-    printf("passed recursive");
-    result = binarySearch2(arr, 0, n - 1, x);
+    printf("passed recursive... ");
+    result = binarysearch2(arr, 0, n - 1, x);
     assert(result == 3);
-    printf(" passed iterative...\n");  
+    printf("passed iterative...\n");
 
-    printf("Test 2...");
+    printf("Test 2.... ");
     x = 5;
     // set result to what is returned from binarysearch
-    result = binarySearch1(arr, 0, n -1 , x);
-    assert( result == -1);
-    printf("passed recursive...");
-    result = binarySearch2(arr, 0, n -1, x);
+    result = binarysearch1(arr, 0, n - 1, x);
     assert(result == -1);
-    printf("passed iterative...\n"); 
+    printf("passed recursive... ");
+    result = binarysearch2(arr, 0, n - 1, x);
+    assert(result == -1);
+    printf("passed iterative...\n");
+}
+
+/** Main function */
+int main(void)
+{
+    test();
+    return 0;
 }
