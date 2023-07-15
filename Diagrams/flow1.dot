@@ -1,0 +1,68 @@
+digraph flowchart {
+    // Step 0
+    start [shape=ellipse, label="Start"];
+    userLogin [shape=box, label="User Login"];
+
+    // Step 1
+    showMenu [shape=box, label="Show Menu"];
+    inputChoice [shape=diamond, label="Input Choice"];
+    displaySeats [shape=box, label="Display Available Seats"];
+    addPassenger [shape=box, label="Add Passenger"];
+    editSeatNumber [shape=box, label="Edit Seat Number"];
+    cancelReservation [shape=box, label="Cancel Reservation"];
+    showFileContent [shape=box, label="Show List of Passengers"];
+    exit [shape=box, label="Exit"];
+
+    // Step 2
+    initializeSeats [shape=box, label="Initialize Seats"];
+    inputFilename [shape=box, label="Input Filename"];
+    loggedIn [shape=diamond, label="Logged In?"];
+    loadingScreen [shape=box, label="Loading Screen"];
+
+    // Step 3
+    readFromFile [shape=box, label="Read From File"];
+    writeToFile [shape=box, label="Write To File"];
+    freeSeats [shape=box, label="Free Seats"];
+    end [shape=ellipse, label="End"];
+
+    // Step 0 -> Step 2
+    start -> userLogin -> loggedIn -> inputFilename;
+    loggedIn -> loadingScreen;
+
+    // Step 2 -> Step 3
+    inputFilename -> initializeSeats;
+    initializeSeats -> readFromFile;
+
+    // Step 3 -> Step 1
+    readFromFile -> showMenu;
+    readFromFile -> displaySeats;
+    readFromFile -> addPassenger;
+    readFromFile -> editSeatNumber;
+    readFromFile -> cancelReservation;
+    readFromFile -> showFileContent;
+    readFromFile -> exit;
+
+    // Step 1 -> Step 2
+    showMenu -> inputChoice;
+    inputChoice -> displaySeats [label="1"];
+    inputChoice -> addPassenger [label="2"];
+    inputChoice -> editSeatNumber [label="3"];
+    inputChoice -> cancelReservation [label="4"];
+    inputChoice -> showFileContent [label="5"];
+    inputChoice -> exit [label="6"];
+
+    // Step 2 -> Step 3
+    loadingScreen -> readFromFile;
+
+    // Step 1 -> Step 1
+    displaySeats -> showMenu;
+    addPassenger -> showMenu;
+    editSeatNumber -> showMenu;
+    cancelReservation -> showMenu;
+    showFileContent -> showMenu;
+    exit -> end;
+
+    // Step 3 -> Step 3
+    writeToFile -> readFromFile;
+    freeSeats -> end;
+}
