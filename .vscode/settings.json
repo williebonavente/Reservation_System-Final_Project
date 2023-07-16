@@ -37,6 +37,7 @@
         "stdbool.h": "c",
         "stdlib.h": "c",
         "corecrt.h": "c",
-        "unistd.h": "c"
+        "unistd.h": "c",
+        "hello.h": "c"
     }
 }
