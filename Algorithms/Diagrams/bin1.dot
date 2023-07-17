@@ -1,0 +1,14 @@
+digraph binary_search {
+    // Nodes
+    start [shape=ellipse, label="Start"];
+    binarySearchRecursive [shape=box, label="Binary Search Recursive"];
+    binarySearchIterative [shape=box, label="Binary Search Iterative"];
+    test [shape=box, label="Test"];
+
+    // Edges
+    start -> test;
+    test -> binarySearchRecursive [label="Test 1"];
+    test -> binarySearchIterative [label="Test 1"];
+    test -> binarySearchRecursive [label="Test 2"];
+    test -> binarySearchIterative [label="Test 2"];
+}

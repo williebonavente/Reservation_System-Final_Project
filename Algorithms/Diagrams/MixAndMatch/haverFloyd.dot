@@ -1,0 +1,60 @@
+digraph algorithms {
+    // Haversine Algorithm
+    subgraph cluster_haversine {
+        label="Haversine Algorithm";
+        // Nodes
+        start_h [shape=ellipse, label="Start"];
+        input1_h [shape=box, label="Enter Latitude 1"];
+        input2_h [shape=box, label="Enter Longitude 1"];
+        input3_h [shape=box, label="Enter Latitude 2"];
+        input4_h [shape=box, label="Enter Longitude 2"];
+        calculations_h [shape=box, label="Perform Calculations"];
+        output_h [shape=box, label="Print Distance"];
+        end_h [shape=ellipse, label="End"];
+
+        // Edges
+        start_h -> input1_h;
+        input1_h -> input2_h;
+        input2_h -> input3_h;
+        input3_h -> input4_h;
+        input4_h -> calculations_h;
+        calculations_h -> output_h;
+        output_h -> end_h;
+    }
+
+    // Floyd-Warshall Algorithm
+    subgraph cluster_floyd_warshall {
+        label="Floyd-Warshall Algorithm";
+        // Nodes
+        start_f [shape=ellipse, label="Start"];
+        inputVertices_f [shape=box, label="Enter the number of vertices"];
+        inputEdges_f [shape=box, label="Enter the adjacency matrix"];
+        initialize_f [shape=box, label="Initialize distance matrix"];
+        loopK_f [shape=diamond, label="Loop for K"];
+        loopI_f [shape=diamond, label="Loop for I"];
+        loopJ_f [shape=diamond, label="Loop for J"];
+        calculateDistance_f [shape=box, label="Calculate new distance"];
+        updateDistance_f [shape=box, label="Update distance matrix"];
+        output_f [shape=box, label="Print shortest distances"];
+        end_f [shape=ellipse, label="End"];
+
+        // Edges
+        start_f -> inputVertices_f;
+        inputVertices_f -> inputEdges_f;
+        inputEdges_f -> initialize_f;
+        initialize_f -> loopK_f;
+        loopK_f -> loopI_f [label="K++"];
+        loopI_f -> loopJ_f [label="I++"];
+        loopJ_f -> calculateDistance_f [label="J++"];
+        calculateDistance_f -> updateDistance_f;
+        updateDistance_f -> loopJ_f;
+        loopJ_f -> loopI_f [label="J=0"];
+        loopI_f -> loopK_f [label="I=0"];
+        loopK_f -> output_f;
+        output_f -> end_f;
+    }
+
+    // Combined Graph
+    start_h -> start_f;
+    end_h -> end_f;
+}

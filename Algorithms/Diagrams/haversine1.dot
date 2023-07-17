@@ -1,0 +1,20 @@
+digraph haversine {
+    // Nodes
+    start [shape=ellipse, label="Start"];
+    input1 [shape=box, label="Enter Latitude 1"];
+    input2 [shape=box, label="Enter Longitude 1"];
+    input3 [shape=box, label="Enter Latitude 2"];
+    input4 [shape=box, label="Enter Longitude 2"];
+    calculations [shape=box, label="Perform Calculations"];
+    output [shape=box, label="Print Distance"];
+    end [shape=ellipse, label="End"];
+
+    // Edges
+    start -> input1;
+    input1 -> input2;
+    input2 -> input3;
+    input3 -> input4;
+    input4 -> calculations;
+    calculations -> output;
+    output -> end;
+}
