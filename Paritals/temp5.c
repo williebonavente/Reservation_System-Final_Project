@@ -103,13 +103,13 @@ int main()
             case 3:
                 // Step 4: Edit seat number
                 readFromFile(filename, &seats);
-                editSeatNumber(seats, filename);
+                editSeatNumber((Seat ***)seats, filename);
 
                 break;
             case 4:
                 // Step 5: Cancel reservation
                 readFromFile(filename, &seats);
-                cancelReservation(seats, filename);
+                cancelReservation((Seat ***)seats, filename);
                 break;
             case 5:
                 // Step 6: Display list of passengers
@@ -528,7 +528,7 @@ void modifySeatAssignment(Seat ***seats)
             printf("Enter the filename to save seat assignments: ");
             char filename[MAX_FILENAME_LENGTH];
             scanf(" %[^\n]", filename);
-            writeToFile(filename, seats);
+            writeToFile(filename, (Seat **)seats);
         }
         else
         {
@@ -560,7 +560,7 @@ bool userLogin()
 
 void editSeatNumber(Seat ***seats, const char *filename)
 {
-    displaySeats(seats);
+    displaySeats((const Seat **)seats);
 
     int fromRow;
     char fromCol;
@@ -582,7 +582,7 @@ void editSeatNumber(Seat ***seats, const char *filename)
             {
                 modifySeat(seats, fromRow, fromCol, toRow, toCol);
                 printf("Seat number modified successfully.\n");
-                writeToFile(filename, seats);
+                writeToFile(filename, (Seat **)seats);
                 return; // Exit the function after modifying the seat
             }
             else
@@ -622,7 +622,7 @@ void cancelReservation(Seat ***seats, const char *filename)
 
     do
     {
-        displaySeats(seats);
+        displaySeats((const Seat **)seats);
 
         printf("Enter the seat to cancel (row column) or press C to cancel: ");
         if (scanf("%d %c", &row, &col) != 2)
@@ -646,7 +646,7 @@ void cancelReservation(Seat ***seats, const char *filename)
             (*seats)[row - 1][col - 'A'].passenger.name[0] = '\0';
 
             // Save the updated seat assignment to the file
-            writeToFile(filename, seats);
+            writeToFile(filename, (Seat **)seats);
 
             printf("Reservation canceled successfully.\n");
         }
