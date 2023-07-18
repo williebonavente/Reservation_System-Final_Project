@@ -38,6 +38,7 @@
         "stdlib.h": "c",
         "corecrt.h": "c",
         "unistd.h": "c",
-        "hello.h": "c"
+        "hello.h": "c",
+        "input.h": "c"
     }
 }
