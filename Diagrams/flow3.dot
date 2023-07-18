@@ -1,0 +1,28 @@
+digraph flowchart {
+    // Nodes
+    start [shape=ellipse, label="Start"];
+    userLogin [shape=box, label="User Login"];
+    showMenu [shape=box, label="Show Menu"];
+    displaySeats [shape=box, label="Display Available Seats"];
+    addPassenger [shape=box, label="Add Passenger"];
+    editSeatNumber [shape=box, label="Edit Seat Number"];
+    cancelReservation [shape=box, label="Cancel Reservation"];
+    showFileContent [shape=box, label="Show List of Passengers"];
+    exit [shape=box, label="Exit"];
+    end [shape=ellipse, label="End"];
+
+    // Edges
+    start -> userLogin -> showMenu;
+    showMenu -> displaySeats [label="1"];
+    showMenu -> addPassenger [label="2"];
+    showMenu -> editSeatNumber [label="3"];
+    showMenu -> cancelReservation [label="4"];
+    showMenu -> showFileContent [label="5"];
+    showMenu -> exit [label="6"];
+    displaySeats -> showMenu;
+    addPassenger -> showMenu;
+    editSeatNumber -> showMenu;
+    cancelReservation -> showMenu;
+    showFileContent -> showMenu;
+    exit -> end;
+}
