@@ -4,6 +4,9 @@
 # Ignore plain text files
 *.txt
 
+# Ignore the .bin files
+*.bin
+
 ### C ###
 # Prerequisites
 *.d

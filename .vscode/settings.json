@@ -39,6 +39,7 @@
         "corecrt.h": "c",
         "unistd.h": "c",
         "hello.h": "c",
-        "input.h": "c"
+        "input.h": "c",
+        "euclid.h": "c"
     }
 }

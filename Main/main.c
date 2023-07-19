@@ -1,13 +1,13 @@
 #include <stdio.h>
-#include "../libs/hello.h"
-#include "../libs/input.h"
+#include "../libs/euclid.h"
 
 int main(void)
 {
-    int input = getInput();
-    helloWorld();
-
-    printf("%i ", input);
+    int a, b;
+    printf("Enter two numbers: "); 
+    scanf("%i%i", &a,&b);
+    int GCD = euclideanGCD(a, b);
+    printf("%i ", GCD);
 
     return 0;
 }
