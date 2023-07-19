@@ -34,7 +34,7 @@ int main() {
     double coefficient = diceCoefficient(set1, set2, size1, size2);
 
     // Output the result
-    printf("Sørensen–Dice Coefficient: %.2f\n", coefficient);
+    printf("Sørensen-Dice Coefficient: %.2f\n", coefficient);
 
     return 0;
 }
