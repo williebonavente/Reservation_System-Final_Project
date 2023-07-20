@@ -27,6 +27,12 @@ typedef struct
     Passenger passenger;
 } Seat;
 
+enum SortOrder
+{
+    ASCENDING,
+    DESCENDING
+};
+
 // Function declarations
 // Option 1
 void showMenu();
@@ -62,7 +68,19 @@ void forgotPassword(char password[]);
 void saveUserToDatabase(const char *filename, const char *username, const char *password, const char *securityQuestion, const char *securityAnswer);
 void censorPassword(char *password);
 void getPassword(char *password);
-
+void deleteRecord(Seat seats[MAX_ROW][MAX_COL], const char *filename);
+int compareByName(const void *a, const void *b);
+int compareByAgeAscending(const void *a, const void *b);
+int compareByAgeDescending(const void *a, const void *b);
+void searchRecords(Seat seats[MAX_ROW][MAX_COL]);
+void customView(Seat seats[MAX_ROW][MAX_COL], char const *filename);
+// Sorting function
+void sortByName(Seat seats[MAX_ROW][MAX_COL], enum SortOrder order);
+void sortByAge(Seat seats[MAX_ROW][MAX_COL], enum SortOrder order);
+void sortByAddress(Seat seats[MAX_ROW][MAX_COL], enum SortOrder order);
+int countAssignedRecords(Seat seats[MAX_ROW][MAX_COL]);
+void sortMenu(Seat seats[MAX_ROW][MAX_COL], const char *filename);
+void filterPassengersByName(Seat seats[MAX_ROW][MAX_COL]);
 // Main function - Driver Function
 int main()
 {
@@ -122,8 +140,22 @@ int main()
                 // Step 6: Display list of passengers
                 showFileContent(filename);
                 break;
+
             case 6:
-                // Step 7: Exit
+                // Step 7: Custom View
+                clearScreen();
+                readFromFile(filename, seats);
+                customView(seats, filename);
+                break;
+
+            case 7:
+                // Step 8: Sort Menu
+                clearScreen();
+                readFromFile(filename, seats);
+                sortMenu(seats, filename);
+                break;
+
+            case 8:
                 clearScreen();
                 printf("\n\t\t\tTHE PROGRAM IS NOW EXITING.\t\t\n");
                 loadingScreen();
@@ -189,7 +221,9 @@ void showMenu()
     printf("\t\t[3] Edit Seat Number\n");
     printf("\t\t[4] Cancel Reservation\n");
     printf("\t\t[5] Display the List of Passengers\n");
-    printf("\t\t[6] EXIT\n");
+    printf("\t\t[6] Custom View\n");
+    printf("\t\t[7] Sort Menu\n");
+    printf("\t\t[8] EXIT\n");
 }
 
 // Function definitions
@@ -419,6 +453,341 @@ void displaySeats(const Seat seats[MAX_ROW][MAX_COL])
         printf("\n%*s---------------------------------\n", paddingSeatMap, "");
     }
     printf("\n");
+}
+
+void deleteRecord(Seat seats[MAX_ROW][MAX_COL], const char *filename)
+{
+    char name[MAX_NAME_LENGTH];
+    printf("Enter the name of the passenger to delete: ");
+    scanf("%s", name);
+
+    bool recordDeleted = false;
+
+    for (int i = 0; i < MAX_ROW; i++)
+    {
+        for (int j = 0; j < MAX_COL; j++)
+        {
+            if ((seats)[i][j].passenger.assigned && strcmp((seats)[i][j].passenger.name, name) == 0)
+            {
+                (seats)[i][j].passenger.assigned = false;
+                (seats)[i][j].passenger.name[0] = '\0';
+                recordDeleted = true;
+            }
+        }
+    }
+
+    if (recordDeleted)
+    {
+        writeToFile(filename, seats);
+        printf("Record for passenger '%s' deleted successfully.\n", name);
+    }
+    else
+    {
+        printf("Record for passenger '%s' not found.\n", name);
+    }
+}
+
+int compareByName(const void *a, const void *b)
+{
+    const Passenger *p1 = &((Seat *)a)->passenger;
+    const Passenger *p2 = &((Seat *)b)->passenger;
+    return strcmp(p1->name, p2->name);
+}
+
+int compareByAgeAscending(const void *a, const void *b)
+{
+    const Passenger *p1 = &((Seat *)a)->passenger;
+    const Passenger *p2 = &((Seat *)b)->passenger;
+    return p1->age - p2->age;
+}
+
+int compareByAgeDescending(const void *a, const void *b)
+{
+    const Passenger *p1 = &((Seat *)a)->passenger;
+    const Passenger *p2 = &((Seat *)b)->passenger;
+    return p2->age - p1->age;
+}
+
+void searchRecords(Seat seats[MAX_ROW][MAX_COL])
+{
+    int searchChoice;
+    printf("Choose search field:\n");
+    printf("1. Name\n");
+    printf("2. Age\n");
+    printf("3. Address\n");
+    printf("Enter the field number to search: ");
+    scanf("%d", &searchChoice);
+
+    char searchKey[MAX_NAME_LENGTH];
+    int searchAge;
+    char searchAddress[MAX_ADDRESS_LENGTH];
+
+    switch (searchChoice)
+    {
+    case 1:
+        printf("Enter the name to search: ");
+        scanf("%s", searchKey);
+        break;
+    case 2:
+        printf("Enter the age to search: ");
+        scanf("%d", &searchAge);
+        break;
+    case 3:
+        printf("Enter the address to search: ");
+        scanf(" %[^\n]", searchAddress);
+        break;
+    default:
+        printf("Invalid choice.\n");
+        return;
+    }
+
+    bool recordFound = false;
+
+    for (int i = 0; i < MAX_ROW; i++)
+    {
+        for (int j = 0; j < MAX_COL; j++)
+        {
+            if ((seats)[i][j].passenger.assigned)
+            {
+                Passenger *p = &(seats)[i][j].passenger;
+
+                switch (searchChoice)
+                {
+                case 1:
+                    if (strcmp(p->name, searchKey) == 0)
+                    {
+                        printf("%s found at Seat %d%c\n", p->name, i + 1, 'A' + j);
+                        recordFound = true;
+                    }
+                    break;
+                case 2:
+                    if (p->age == searchAge)
+                    {
+                        printf("Passenger %s (Age: %d) found at Seat %d%c\n", p->name, p->age, i + 1, 'A' + j);
+                        recordFound = true;
+                    }
+                    break;
+                case 3:
+                    if (strcmp(p->address, searchAddress) == 0)
+                    {
+                        printf("Passenger %s (Address: %s) found at Seat %d%c\n", p->name, p->address, i + 1, 'A' + j);
+                        recordFound = true;
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    if (!recordFound)
+    {
+        printf("No records found for the search query.\n");
+    }
+}
+
+void customView(Seat seats[MAX_ROW][MAX_COL], char const *filename)
+{
+    int viewChoice;
+    printf("Choose custom view:\n");
+    printf("1. All Information\n");
+    printf("2. Name Only\n");
+    printf("3. Age Only\n");
+    printf("4. Address Only\n");
+    printf("Enter the view number: ");
+    scanf("%d", &viewChoice);
+
+    switch (viewChoice)
+    {
+    case 1:
+        showFileContent(filename);
+        break;
+    case 2:
+        for (int i = 0; i < MAX_ROW; i++)
+        {
+            for (int j = 0; j < MAX_COL; j++)
+            {
+                if ((seats)[i][j].passenger.assigned)
+                {
+                    printf("Name: %s\n", (seats)[i][j].passenger.name);
+                }
+            }
+        }
+        break;
+    case 3:
+        for (int i = 0; i < MAX_ROW; i++)
+        {
+            for (int j = 0; j < MAX_COL; j++)
+            {
+                if ((seats)[i][j].passenger.assigned)
+                {
+                    printf("Age: %d\n", (seats)[i][j].passenger.age);
+                }
+            }
+        }
+        break;
+    case 4:
+        for (int i = 0; i < MAX_ROW; i++)
+        {
+            for (int j = 0; j < MAX_COL; j++)
+            {
+                if ((seats)[i][j].passenger.assigned)
+                {
+                    printf("Address: %s\n", (seats)[i][j].passenger.address);
+                }
+            }
+        }
+        break;
+    default:
+        printf("Invalid choice.\n");
+        break;
+    }
+}
+
+int countAssignedRecords(Seat seats[MAX_ROW][MAX_COL])
+{
+    int count = 0;
+    for (int i = 0; i < MAX_ROW; i++)
+    {
+        for (int j = 0; j < MAX_COL; j++)
+        {
+            if (seats[i][j].passenger.assigned)
+            {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+void filterPassengersByName(Seat seats[MAX_ROW][MAX_COL])
+{
+    char searchName[MAX_NAME_LENGTH];
+    printf("Enter the name to filter by: ");
+    scanf("%s", searchName);
+
+    bool recordFound = false;
+
+    for (int i = 0; i < MAX_ROW; i++)
+    {
+        for (int j = 0; j < MAX_COL; j++)
+        {
+            if (seats[i][j].passenger.assigned)
+            {
+                if (strcmp(seats[i][j].passenger.name, searchName) == 0)
+                {
+                    printf("Passenger %s found at Seat %d%c\n", searchName, i + 1, 'A' + j);
+                    recordFound = true;
+                }
+            }
+        }
+    }
+
+    if (!recordFound)
+    {
+        printf("No records found for the search query.\n");
+    }
+}
+
+
+void sortByName(Seat seats[MAX_ROW][MAX_COL], enum SortOrder order)
+{
+    int totalRecords = countAssignedRecords(seats);
+    Passenger temp;
+
+    for (int i = 0; i < totalRecords - 1; i++)
+    {
+        for (int j = 0; j < totalRecords - i - 1; j++)
+        {
+            int compareResult = strcmp(seats[j][0].passenger.name, seats[j + 1][0].passenger.name);
+            if ((order == ASCENDING && compareResult > 0) || (order == DESCENDING && compareResult < 0))
+            {
+                temp = seats[j][0].passenger;
+                seats[j][0].passenger = seats[j + 1][0].passenger;
+                seats[j + 1][0].passenger = temp;
+            }
+        }
+    }
+}
+
+void sortByAge(Seat seats[MAX_ROW][MAX_COL], enum SortOrder order)
+{
+    int totalRecords = countAssignedRecords(seats);
+    Passenger temp;
+
+    for (int i = 0; i < totalRecords - 1; i++)
+    {
+        for (int j = 0; j < totalRecords - i - 1; j++)
+        {
+            if ((order == ASCENDING && seats[j][0].passenger.age > seats[j + 1][0].passenger.age) ||
+                (order == DESCENDING && seats[j][0].passenger.age < seats[j + 1][0].passenger.age))
+            {
+                temp = seats[j][0].passenger;
+                seats[j][0].passenger = seats[j + 1][0].passenger;
+                seats[j + 1][0].passenger = temp;
+            }
+        }
+    }
+}
+
+void sortByAddress(Seat seats[MAX_ROW][MAX_COL], enum SortOrder order)
+{
+    int totalRecords = countAssignedRecords(seats);
+    Passenger temp;
+
+    for (int i = 0; i < totalRecords - 1; i++)
+    {
+        for (int j = 0; j < totalRecords - i - 1; j++)
+        {
+            int compareResult = strcmp(seats[j][0].passenger.address, seats[j + 1][0].passenger.address);
+            if ((order == ASCENDING && compareResult > 0) || (order == DESCENDING && compareResult < 0))
+            {
+                temp = seats[j][0].passenger;
+                seats[j][0].passenger = seats[j + 1][0].passenger;
+                seats[j + 1][0].passenger = temp;
+            }
+        }
+    }
+}
+
+void sortMenu(Seat seats[MAX_ROW][MAX_COL], const char *filename)
+{
+    int sortChoice;
+    int sortOrder;
+    printf("Choose sorting field:\n");
+    printf("1. Sort by Name\n");
+    printf("2. Sort by Age\n");
+    printf("3. Sort by Address\n");
+    printf("Enter the sort field number: ");
+    scanf("%d", &sortChoice);
+
+    printf("Choose sort order:\n");
+    printf("1. Ascending\n");
+    printf("2. Descending\n");
+    printf("Enter the sort order number: ");
+    scanf("%d", &sortOrder);
+
+    enum SortOrder order = (sortOrder == 1) ? ASCENDING : DESCENDING;
+
+    switch (sortChoice)
+    {
+    case 1:
+        sortByName(seats, order);
+        printf("Sorted by Name:\n");
+        break;
+    case 2:
+        sortByAge(seats, order);
+        printf("Sorted by Age:\n");
+        break;
+    case 3:
+        sortByAddress(seats, order);
+        printf("Sorted by Address:\n");
+        break;
+    default:
+        printf("Invalid choice.\n");
+        return;
+    }
+
+    showFileContent(filename);
 }
 
 void showFileContent(const char *filename)
