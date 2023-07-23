@@ -11,7 +11,6 @@
 #define MAX_NAME_LENGTH 100
 #define MAX_ADDRESS_LENGTH 100
 
-// Struct definitions
 typedef struct
 {
     char name[MAX_NAME_LENGTH];
@@ -25,131 +24,118 @@ typedef struct
     Passenger passenger;
 } Seat;
 
-// Function declarations
-// Option 1
-void showMenu();
-void loadingScreen();
-void inputFilename(char *filename);
-void initializeSeats(Seat ***seats);
-void freeSeats(Seat ***seats);
-void clearScreen();
-// Step 2 / Case 2
-void addPassenger(Seat ***seats, const char *filename);
-bool isSeatValid(int row, char col);
-void assignSeat(Seat ***seats, const char *name, int age, const char *address, int row, char col);
-void displaySeats(const Seat **seats);
-void writeToFile(const char *filename, Seat ***seats);
-void readFromFile(const char *filename, Seat ***seats);
+// Step 1
+void disp_menu();
+void loading_screen();
+void inp_filename(char *filename);
+void init_sts(Seat ***seats);
+void free_sts(Seat ***seats);
+void clearScn();
 
-// Step 3  / Case 3
-void editSeatNumber(Seat ***seats, const char *filename);
-void modifySeat(Seat ***seats, int fromRow, char fromCol, int toRow, char toCol);
+// Step 2 / Case 2
+bool validity(int row, char col);
+void assigning(Seat ***seats, const char *name, int age, const char *address, int row, char col);
+void add_pass(Seat ***seats, const char *filename);
+void writing(const char *filename, Seat ***seats);
+void reading(const char *filename, Seat ***seats);
+void displaying(const Seat **seats);
+
+// Step 3 / Case 3
+void showing(const char *filename);
+void clearing(const char *filename);
+void editing(Seat ***seats, const char *filename);
+void appending(const char *filename, const char *name, int age, const char *address, int row, char col);
+bool user_login();
+void modify_seat_Ass(Seat ***seats, int fromRow, char fromCol, int toRow, char toCol); // Renamed from modify_seat
 
 // Step 4 / Case 4
-void cancelReservation(Seat ***seats, const char *filename);
+void canceling(Seat ***seats, const char *filename);
 
 // Menu File Functions - 1
-void showFileContent(const char *filename);
-void clearFile(const char *filename);
-void appendToFile(const char *filename, const char *name, int age, const char *address, int row, char col);
-void modifySeatAssignment(Seat ***seats);
-bool userLogin();
+void modifying(Seat ***seats);
 
 // Main function - Driver Function
 int main()
 {
     Seat **seats = NULL;
-    initializeSeats(&seats);
+    init_sts(&seats);
 
-    int choice;   // choice by the user on the menu.
-    char another; //  if the user want to continue.
+    int choice;
+    char another;
 
-    // get the filename from the user
     char filename[MAX_FILENAME_LENGTH];
-    inputFilename(filename);
-
-    // Step 0: User login with correct password
-
-    // continue with the remaining steps if logged in successfully
+    inp_filename(filename);
 
     if (access(filename, F_OK) == -1)
     {
         printf("Error: The file '%s' does not exist.\n", filename);
-        freeSeats(&seats); // Free the allocated memory before exiting
+        free_sts(&seats); // Free the allocated memory before exiting
         return 1;
     }
 
     else
     {
-        bool loggedIn = userLogin();
+        bool loggedIn = user_login();
         if (loggedIn)
         {
-            loadingScreen();
             do
             {
-                // Step 1: Display the Menu first.
-                clearScreen();
-                showMenu();
+                clearScn();  // cls
+                disp_menu(); // Displaying the menu
                 printf("\t\nEnter your choice >> ");
                 scanf("%i", &choice);
 
                 switch (choice)
                 {
                 case 1:
-                    // Step 2: Display available seats
-                    clearScreen();
-                    readFromFile(filename, &seats);
-                    displaySeats((const Seat **)seats);
+                    clearScn();
+                    reading(filename, &seats);
+                    displaying((const Seat **)seats);
                     break;
                 case 2:
-                    // Step 3: Add passengers
-                    clearScreen();
-                    readFromFile(filename, &seats);
-                    addPassenger(&seats, filename);
+                    clearScn();
+                    reading(filename, &seats);
+                    add_pass(&seats, filename);
                     break;
                 case 3:
-                    // Step 4: Edit seat number
-                    clearScreen();
-                    readFromFile(filename, &seats);
-                    editSeatNumber(&seats, filename);
-
+                    clearScn();
+                    reading(filename, &seats);
+                    editing(&seats, filename);
                     break;
                 case 4:
-                    // Step 5: Cancel reservation
-                    clearScreen();
-                    readFromFile(filename, &seats);
-                    cancelReservation(&seats, filename);
+                    clearScn();
+                    reading(filename, &seats);
+                    canceling(&seats, filename);
                     break;
                 case 5:
-                    // Step 6: Display list of passengers
-                    clearScreen();
-                    readFromFile(filename, &seats);
-                    showFileContent(filename);
+                    clearScn();
+                    reading(filename, &seats);
+                    showing(filename);
                     break;
                 case 6:
-                    // Step 7: Exit
-                    clearScreen();
+                    clearScn();
                     printf("\n\t\tTHIS PROGRAM WAS CREATED BY: WILLIE M. BONAVENTE\n");
                     printf("\t\t\t\tBSIT 1-5\n");
                     printf("\n\t\t\tTHE PROGRAM IS NOW EXITING.\t\t\n");
-                    loadingScreen();
+                    loading_screen();
                     exit(1);
                     break;
+
                 default:
-                    clearScreen();
+                    clearScn();
                     printf("\n\t\t\tError! P4lease select a valid option.\t\t\n");
                     printf("\n");
+                    break;
                 }
-
                 printf("\n\tReturn to Main Menu (Press 'Y') >> ");
                 scanf(" %c", &another);
-                clearScreen();
+                clearScn();
             } while (another == 'Y' || another == 'y');
         }
 
         else
         {
-            clearScreen();
+            clearScn();
             printf("\n");
             printf("\t\tInvalid password. Login failed.\n");
         }
@@ -159,39 +145,14 @@ int main()
     printf("\n\t\tTHIS PROGRAM WAS CREATED BY: WILLIE M. BONAVENTE\n");
     printf("\t\t\t\tBSIT 1-5\n");
     printf("\n\t\t\tTHE PROGRAM IS NOW EXITING.\t\t\n");
-    loadingScreen();
-    freeSeats(&seats);
+    loading_screen();
+    free_sts(&seats);
+    return 0;
+
     return 0;
 }
 
-void loadingScreen()
-{
-    int i;
-
-    for (i = 3; i > 0; i--)
-    {
-        printf("\t\t\t\t%d...\n", i);
-        sleep(1);
-    }
-    clearScreen();
-}
-
-void clearScreen()
-{
-#ifdef _WIN32
-    system("cls");
-
-#endif
-}
-
-void inputFilename(char *filename)
-{
-    printf("Enter the filename >> ");
-    fgets(filename, MAX_FILENAME_LENGTH, stdin);
-    filename[strcspn(filename, "\n")] = '\0'; // Remove trailing newline character
-}
-
-void showMenu()
+void disp_menu()
 {
     printf("\n\t\t\tMAIN MENU\t\t\n");
     printf("\n");
@@ -203,8 +164,34 @@ void showMenu()
     printf("\t\t[6] EXIT\n");
 }
 
-// Function definitions
-void initializeSeats(Seat ***seats)
+void clearScn()
+{
+#ifdef _WIN32
+    system("cls");
+
+#endif
+}
+void loading_screen()
+{
+    int i;
+
+    for (i = 3; i > 0; i--)
+    {
+        printf("\t\t\t\t%d...\n", i);
+        sleep(1);
+    }
+
+    clearScn();
+}
+
+void inp_filename(char *filename)
+{
+    printf("Enter the filename >> ");
+    fgets(filename, MAX_FILENAME_LENGTH, stdin);
+    filename[strcspn(filename, "\n")] = '\0'; // Remove trailing newline character
+}
+
+void init_sts(Seat ***seats)
 {
     *seats = (Seat **)malloc(MAX_ROW * sizeof(Seat *));
     for (int i = 0; i < MAX_ROW; i++)
@@ -216,8 +203,8 @@ void initializeSeats(Seat ***seats)
         }
     }
 }
+void free_sts(Seat ***seats)
 
-void freeSeats(Seat ***seats)
 {
     // Free dynamically allocated memory for seats
     for (int i = 0; i < MAX_ROW; i++)
@@ -228,14 +215,14 @@ void freeSeats(Seat ***seats)
     *seats = NULL;
 }
 
-bool isSeatValid(int row, char col)
+bool validity(int row, char col)
 {
     // Check if the given seat is valid
     // Return true if valid, false otherwise
     return row >= 1 && row <= MAX_ROW && col >= 'A' && col <= ('A' + MAX_COL - 1);
 }
 
-void assignSeat(Seat ***seats, const char *name, int age, const char *address, int row, char col)
+void assigning(Seat ***seats, const char *name, int age, const char *address, int row, char col)
 {
     // Assign the seat to the passenger
     strcpy((*seats)[row - 1][col - 'A'].passenger.name, name);
@@ -244,7 +231,7 @@ void assignSeat(Seat ***seats, const char *name, int age, const char *address, i
     (*seats)[row - 1][col - 'A'].passenger.assigned = true;
 }
 
-void addPassenger(Seat ***seats, const char *filename)
+void add_pass(Seat ***seats, const char *filename)
 {
     char name[MAX_NAME_LENGTH];
     int age;
@@ -255,8 +242,8 @@ void addPassenger(Seat ***seats, const char *filename)
 
     do
     {
-        clearScreen();
-        displaySeats((const Seat **)*seats);
+        clearScn();
+        displaying((const Seat **)*seats);
         printf("\nEnter passenger name (or press C to cancel): ");
         if (scanf("%s", name) == 1)
         {
@@ -307,19 +294,19 @@ void addPassenger(Seat ***seats, const char *filename)
         printf("Enter the seat (row column) or press C to cancel: ");
         if (scanf("%d %c", &row, &col) == 2)
         {
-            if (isSeatValid(row, col) && !(*seats)[row - 1][col - 'A'].passenger.assigned)
+            if (validity(row, col) && !(*seats)[row - 1][col - 'A'].passenger.assigned)
             {
-                assignSeat(seats, name, age, address, row, col);
+                assigning(seats, name, age, address, row, col);
 
                 // Save the seat assignment to a file
-                clearScreen();
-                assignSeat(seats, name, age, address, row, col);
+                clearScn();
+                assigning(seats, name, age, address, row, col);
                 printf("Seat assigned successfully.\n");
                 printf("Name: %s\n", name);
                 printf("Age: %d\n", age);
                 printf("Address: %s\n", address);
                 printf("Seat: %d%c\n", row, col);
-                appendToFile(filename, name, age, address, row, col);
+                appending(filename, name, age, address, row, col);
             }
             else
             {
@@ -346,7 +333,7 @@ void addPassenger(Seat ***seats, const char *filename)
     } while (another == 'Y' || another == 'y');
 }
 
-void writeToFile(const char *filename, Seat ***seats)
+void writing(const char *filename, Seat ***seats)
 {
     // Write the seat assignments to a file
     FILE *file = fopen(filename, "w");
@@ -371,7 +358,7 @@ void writeToFile(const char *filename, Seat ***seats)
     fclose(file);
 }
 
-void readFromFile(const char *filename, Seat ***seats)
+void reading(const char *filename, Seat ***seats)
 {
     // Read seat assignments from a file
     FILE *file = fopen(filename, "r");
@@ -396,9 +383,9 @@ void readFromFile(const char *filename, Seat ***seats)
 
             if (sscanf(line, "%s%d%s%d%c", name, &age, address, &row, &col) == 5)
             {
-                if (isSeatValid(row, col))
+                if (validity(row, col))
                 {
-                    assignSeat(seats, name, age, address, row, col);
+                    assigning(seats, name, age, address, row, col);
                     // Assign age and address to the assigned passenger
                     strcpy((*seats)[row - 1][col - 'A'].passenger.name, name);
                     (*seats)[row - 1][col - 'A'].passenger.age = age;
@@ -410,7 +397,8 @@ void readFromFile(const char *filename, Seat ***seats)
         fclose(file);
     }
 }
-void displaySeats(const Seat **seats)
+
+void displaying(const Seat **seats)
 {
     int terminalWidth = 80;
     int headerWidth = strlen("Available Seat Map");
@@ -446,7 +434,7 @@ void displaySeats(const Seat **seats)
     printf("\n");
 }
 
-void showFileContent(const char *filename)
+void showing(const char *filename)
 {
     int count = 0;
     printf("\n\t\t\tList of Passengers\t\t\n");
@@ -487,8 +475,7 @@ void showFileContent(const char *filename)
         printf("No passenger records found.\n");
     }
 }
-
-void clearFile(const char *filename)
+void clearing(const char *filename)
 {
     // Clear the content of the file
     FILE *file = fopen(filename, "w");
@@ -500,8 +487,7 @@ void clearFile(const char *filename)
 
     fclose(file);
 }
-
-void appendToFile(const char *filename, const char *name, int age, const char *address, int row, char col)
+void appending(const char *filename, const char *name, int age, const char *address, int row, char col)
 {
     // Append seat assignment to the file
     FILE *file = fopen(filename, "a");
@@ -516,7 +502,7 @@ void appendToFile(const char *filename, const char *name, int age, const char *a
     fclose(file);
 }
 
-void modifySeatAssignment(Seat ***seats)
+void modifying(Seat ***seats)
 {
     // Modify the seat assignment
     printf("Enter the row and column of the seat to modify (e.g., 1A): ");
@@ -524,7 +510,7 @@ void modifySeatAssignment(Seat ***seats)
     char col;
     scanf("%d %c", &row, &col);
 
-    if (isSeatValid(row, col))
+    if (validity(row, col))
     {
         if ((*seats)[row - 1][col - 'A'].passenger.assigned)
         {
@@ -540,13 +526,13 @@ void modifySeatAssignment(Seat ***seats)
             char newAddress[MAX_ADDRESS_LENGTH];
             scanf(" %[^\n]", newAddress);
 
-            assignSeat(seats, newName, newAge, newAddress, row, col);
+            assigning(seats, newName, newAge, newAddress, row, col);
             printf("Seat modified successfully.\n");
 
             printf("Enter the filename to save seat assignments: ");
             char filename[MAX_FILENAME_LENGTH];
             scanf(" %[^\n]", filename);
-            writeToFile(filename, (Seat ***)seats);
+            writing(filename, (Seat ***)seats);
         }
         else
         {
@@ -559,7 +545,7 @@ void modifySeatAssignment(Seat ***seats)
     }
 }
 
-bool userLogin()
+bool user_login()
 {
     char password[20];
     printf("Enter the password: ");
@@ -575,10 +561,8 @@ bool userLogin()
     else
         return false;
 }
-
-void editSeatNumber(Seat ***seats, const char *filename)
+void editing(Seat ***seats, const char *filename)
 {
-
     int fromRow;
     char fromCol;
     int toRow;
@@ -587,26 +571,26 @@ void editSeatNumber(Seat ***seats, const char *filename)
 
     while (true)
     {
-        displaySeats((const Seat **)*seats); // guiding the user.
+        displaying((const Seat **)*seats); // guiding the user.
         printf("Enter the current seat number (row column) or press C to cancel: ");
         if (scanf("%d %c", &fromRow, &fromCol) == 2)
         {
             printf("Enter the new seat number (row column): ");
             scanf("%d %c", &toRow, &toCol);
 
-            if (isSeatValid(fromRow, fromCol) && isSeatValid(toRow, toCol) &&
+            if (validity(fromRow, fromCol) && validity(toRow, toCol) &&
                 (*seats)[fromRow - 1][fromCol - 'A'].passenger.assigned &&
                 !(*seats)[toRow - 1][toCol - 'A'].passenger.assigned)
             {
-                modifySeat(seats, fromRow, fromCol, toRow, toCol);
-                clearScreen();
+                modify_seat_Ass(seats, fromRow, fromCol, toRow, toCol);
+                clearScn();
                 printf("Seat number modified successfully.\n");
                 printf("Seat %d%c has been changed to %d%c\n", fromRow, fromCol, toRow, toCol);
-                writeToFile(filename, (Seat ***)seats);
+                writing(filename, (Seat ***)seats);
             }
             else
             {
-                clearScreen();
+                clearScn();
                 printf("Invalid seat numbers or seat assignment. Please try again.\n");
             }
         }
@@ -621,30 +605,30 @@ void editSeatNumber(Seat ***seats, const char *filename)
             }
             else
             {
-                clearScreen();
+                clearScn();
                 printf("Invalid input. Please try again.\n");
             }
         }
     }
 }
 
-void modifySeat(Seat ***seats, int fromRow, char fromCol, int toRow, char toCol)
+void modify_seat_Ass(Seat ***seats, int fromRow, char fromCol, int toRow, char toCol)
 {
     (*seats)[toRow - 1][toCol - 'A'].passenger = (*seats)[fromRow - 1][fromCol - 'A'].passenger;
     (*seats)[fromRow - 1][fromCol - 'A'].passenger.assigned = false;
     (*seats)[fromRow - 1][fromCol - 'A'].passenger.name[0] = '\0';
 }
 
-void cancelReservation(Seat ***seats, const char *filename)
+void canceling(Seat ***seats, const char *filename)
 {
     int row;
     char col;
     char cancel;
-    clearScreen();
+    clearScn();
 
     do
     {
-        showFileContent(filename);
+        showing(filename);
 
         printf("\nEnter the seat to cancel (row column) or press C to cancel: ");
         if (scanf("%d %c", &row, &col) != 2)
@@ -657,13 +641,13 @@ void cancelReservation(Seat ***seats, const char *filename)
             }
             else
             {
-                clearScreen();
+                clearScn();
                 printf("Invalid input. Please enter a valid seat number or 'C' to cancel.\n");
                 continue; // Restart the loop to prompt for a valid seat number
             }
         }
 
-        if (isSeatValid(row, col) && (*seats)[row - 1][col - 'A'].passenger.assigned)
+        if (validity(row, col) && (*seats)[row - 1][col - 'A'].passenger.assigned)
         {
             // Store the details of the canceled reservation in variables
             char canceledName[MAX_NAME_LENGTH];
@@ -679,9 +663,9 @@ void cancelReservation(Seat ***seats, const char *filename)
             (*seats)[row - 1][col - 'A'].passenger.name[0] = '\0';
 
             // Save the updated seat assignment to the file
-            clearScreen();
+            clearScn();
             printf("Reservation canceled successfully.\n");
-            writeToFile(filename, (Seat ***)seats);
+            writing(filename, (Seat ***)seats);
 
             // Print the details of the canceled reservation
             printf("Canceled Reservation Details:\n");
@@ -692,11 +676,11 @@ void cancelReservation(Seat ***seats, const char *filename)
 
         else
         {
-            clearScreen();
+            clearScn();
             printf("\n\t\tInvalid seat or seat is not assigned.\n");
         }
 
     } while (1); // Continue the loop until a valid seat is canceled or the user cancels the cancellation process with 'C'
 
-    clearScreen();
+    clearScn();
 }
