@@ -54,6 +54,9 @@ void canceling(Seat ***seats, const char *filename);
 
 // Menu File Functions - 1
 void modifying(Seat ***seats);
+void centerAlign(const char *text);
+void setConsoleFont(const wchar_t *fontName);
+void setConsoleFontSize(int fontSize);
 
 // Main function - Driver Function
 int main()
@@ -169,6 +172,31 @@ void centerAlign(const char *text)
     printf("%s", text);
 }
 
+void setConsoleFont(const wchar_t *fontName)
+{
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+
+    CONSOLE_FONT_INFOEX fontInfo;
+    fontInfo.cbSize = sizeof(CONSOLE_FONT_INFOEX);
+    GetCurrentConsoleFontEx(hConsole, FALSE, &fontInfo);
+
+    wcscpy(fontInfo.FaceName, fontName);
+    SetCurrentConsoleFontEx(hConsole, FALSE, &fontInfo);
+}
+
+void setConsoleFontSize(int fontSize)
+{
+    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_FONT_INFOEX fontInfo;
+    fontInfo.cbSize = sizeof(CONSOLE_FONT_INFOEX);
+    GetCurrentConsoleFontEx(hOut, FALSE, &fontInfo);
+
+    fontInfo.dwFontSize.X = fontSize;
+    fontInfo.dwFontSize.Y = fontSize;
+
+    SetCurrentConsoleFontEx(hOut, FALSE, &fontInfo);
+}
+
 void disp_menu()
 {
     HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -176,23 +204,31 @@ void disp_menu()
     GetConsoleMode(hOut, &dwMode);
     SetConsoleMode(hOut, dwMode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
 
+    // Set the font to "Big Money-ne" at the beginning
+    setConsoleFont(L"Big Money-ne");
+
+    // Set the font size to 36 for the title
+    setConsoleFontSize(24);
+
     // Enable light green color for the title
     printf("\033[1;92m");
 
     printf("\n");
-    printf("\t\t=====================================================\n");
-    centerAlign("WELCOME FURRDIE BIRDIE AIRLINE");
+    printf("\t\t=============================================================\n");
+    centerAlign("WELCOME TO FURRDIE BIRDIE AIRLINE");
     printf("\n");
-    printf("\t\t=====================================================\n");
+    printf("\t\t=============================================================\n");
     printf("\n");
 
-    // Reset color to default
+    // Reset color and font size to default
     printf("\033[0m");
 
     // Enable colors
     printf("\033[1;36m"); // Cyan color
-    printf("\t\t\t\t\tMAIN MENU"); 
-    printf("\n\n "); 
+    printf("\t\t\t\t\tMAIN MENU");
+    printf("\n\n ");
+    printf("\033[0m");
+
     printf("\t\t\t   [%s1%s] Display the Available Seats\n", "\033[1;33m", "\033[0m"); // Yellow color for the option number
     printf("\t\t\t   [%s2%s] Add Passenger\n", "\033[1;33m", "\033[0m");
     printf("\t\t\t   [%s3%s] Edit Seat Number\n", "\033[1;33m", "\033[0m");
@@ -200,10 +236,9 @@ void disp_menu()
     printf("\t\t\t   [%s5%s] Display the List of Passengers\n", "\033[1;33m", "\033[0m");
     printf("\t\t\t   [%s6%s] EXIT\n", "\033[1;33m", "\033[0m");
 
-    // Reset color to default
+    // Reset color and font size to default
     printf("\033[0m");
 }
-
 
 void clearScn()
 {
