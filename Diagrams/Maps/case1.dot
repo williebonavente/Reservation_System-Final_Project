@@ -1,0 +1,7 @@
+graph G {
+    Boston -- Newark;
+    Newark -- Miami;
+    Newark -- Detroit;
+    Newark -- Washington;
+    Washington -- Miami;
+}

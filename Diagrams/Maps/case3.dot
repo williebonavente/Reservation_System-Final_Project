@@ -1,0 +1,11 @@
+digraph {
+    Boston -> Newark [label="4"];
+    Newark -> Boston [label="2"];
+    Newark -> Miami [label="3"];
+    Miami -> Newark [label="2"];
+    Newark -> Detroit [label="1"];
+    Detroit -> Newark [label="2"];
+    Newark -> Washington [label="3"];
+    Washington -> Newark [label="2"];
+    Washington -> Miami [label="1"];
+}
