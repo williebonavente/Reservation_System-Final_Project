@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <windows.h>
 
 // Constants
 #define MAX_ROW 5
@@ -152,17 +153,57 @@ int main()
     return 0;
 }
 
+void centerAlign(const char *text)
+{
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+    int consoleWidth = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+    int textWidth = strlen(text);
+
+    int padding = (consoleWidth - textWidth) / 2;
+    for (int i = 0; i < padding; i++)
+    {
+        putchar(' ');
+    }
+
+    printf("%s", text);
+}
+
 void disp_menu()
 {
-    printf("\n\t\t\tMAIN MENU\t\t\n");
+    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    DWORD dwMode = 0;
+    GetConsoleMode(hOut, &dwMode);
+    SetConsoleMode(hOut, dwMode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+
+    // Enable light green color for the title
+    printf("\033[1;92m");
+
     printf("\n");
-    printf("\t\t[1] Display the Available Seats\n");
-    printf("\t\t[2] Add Passenger\n");
-    printf("\t\t[3] Edit Seat Number\n");
-    printf("\t\t[4] Cancel Reservation\n");
-    printf("\t\t[5] Display the List of Passengers\n");
-    printf("\t\t[6] EXIT\n");
+    printf("\t\t=====================================================\n");
+    centerAlign("WELCOME FURRDIE BIRDIE AIRLINE");
+    printf("\n");
+    printf("\t\t=====================================================\n");
+    printf("\n");
+
+    // Reset color to default
+    printf("\033[0m");
+
+    // Enable colors
+    printf("\033[1;36m"); // Cyan color
+    printf("\t\t\t\t\tMAIN MENU"); 
+    printf("\n\n "); 
+    printf("\t\t\t   [%s1%s] Display the Available Seats\n", "\033[1;33m", "\033[0m"); // Yellow color for the option number
+    printf("\t\t\t   [%s2%s] Add Passenger\n", "\033[1;33m", "\033[0m");
+    printf("\t\t\t   [%s3%s] Edit Seat Number\n", "\033[1;33m", "\033[0m");
+    printf("\t\t\t   [%s4%s] Cancel Reservation\n", "\033[1;33m", "\033[0m");
+    printf("\t\t\t   [%s5%s] Display the List of Passengers\n", "\033[1;33m", "\033[0m");
+    printf("\t\t\t   [%s6%s] EXIT\n", "\033[1;33m", "\033[0m");
+
+    // Reset color to default
+    printf("\033[0m");
 }
+
 
 void clearScn()
 {

@@ -1,5 +1,6 @@
 Dennis	12	Cubao	1A
-Jan	0	Balintawak	1B
 Willie	15	Manila	1D
 Arnie	51	Roosevelt	2B
 Dogma	23	Albania	2D
+Chester	19	Antipolo	3D
+Carlos	29		Sta.Messy		5D
