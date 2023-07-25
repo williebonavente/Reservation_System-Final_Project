@@ -213,20 +213,17 @@ void disp_menu()
     // Enable light green color for the title
     printf("\033[1;92m");
 
-    printf("\n");
-    printf("\t\t=============================================================\n");
-    centerAlign("WELCOME TO FURRDIE BIRDIE AIRLINE");
-    printf("\n");
-    printf("\t\t=============================================================\n");
+    printf("\n\t\t=============================================================\n");
+    centerAlign("WELCOME TO STAIRWAY TO HEAVEN AIRLINE");
+    printf("\n\t\t=============================================================\n");
     printf("\n");
 
     // Reset color and font size to default
     printf("\033[0m");
 
     // Enable colors
-    printf("\033[1;36m"); // Cyan color
-    printf("\t\t\t\t\tMAIN MENU");
-    printf("\n\n ");
+    printf("\033[1;36;104m");
+    printf("\t\t\t\t\tMAIN MENU\n\n");
     printf("\033[0m");
 
     printf("\t\t\t   [%s1%s] Display the Available Seats\n", "\033[1;33m", "\033[0m"); // Yellow color for the option number
@@ -262,7 +259,28 @@ void loading_screen()
 
 void inp_filename(char *filename)
 {
-    printf("Enter the filename >> ");
+    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    DWORD dwMode = 0;
+    GetConsoleMode(hOut, &dwMode);
+    SetConsoleMode(hOut, dwMode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+
+    // Set the font to "Cascadia Code" at the beginning
+    setConsoleFont(L"Cascadia Code");
+
+    // Enable light blue background color for the prompt
+    printf("\033[1;44m");
+
+    // Center align the banner
+    centerAlign("PLEASE ENTER THE FILENAME TO CONTINUE ON THE PROGRAM");
+    printf("\n\n");
+
+    // Center align the prompt
+    centerAlign("Please enter the filename: ");
+
+    // Reset color and font style to default
+    printf("\033[0m");
+    setConsoleFont(L"Consolas");
+
     fgets(filename, MAX_FILENAME_LENGTH, stdin);
     filename[strcspn(filename, "\n")] = '\0'; // Remove trailing newline character
 }
@@ -483,38 +501,64 @@ void displaying(const Seat **seats)
     // Calculate the number of spaces needed to center the header.
     int paddingHeader = (terminalWidth - headerWidth) / 2;
 
+    // Set the title banner color to cyan
+    printf("\033[1;36m");
+
     printf("\n\n");
     printf("\t\t       ---------------------------------\n");
-    printf("%*s%s\n", paddingHeader, "", "Available Seat Map");
+    printf("%*s%s\n", paddingHeader, "", "Seat Map Availability");
     printf("\t\t       ---------------------------------\n");
+
+    // Set the letters' color to light green
+    printf("\033[1;92m");
 
     // Calculate the number of spaces needed to center the seat map
     int paddingSeatMap = (terminalWidth - seatMapWidth) / 2;
 
     for (int i = 0; i < MAX_ROW; i++)
     {
+        // Set the numbers' color to white
+        printf("\033[1;97m");
         printf("%*s%d", paddingSeatMap, " ", i + 1);
+
+        // Reset the color to light green
+        printf("\033[1;92m");
+
         for (int j = 0; j < MAX_COL; j++)
         {
             if (seats[i][j].passenger.assigned)
             {
+                // Change the color to bright red for occupied seats
+                printf("\033[1;91m");
                 printf("      X ");
             }
             else
             {
                 printf("      %c ", 'A' + j);
             }
+
+            // Reset the color to light green
+            printf("\033[1;92m");
         }
         printf("\n%*s---------------------------------\n", paddingSeatMap, "");
     }
     printf("\n");
+
+    // Reset the color to default
+    printf("\033[0m");
 }
 
 void showing(const char *filename)
 {
     int count = 0;
+
+    // Enable cyan color for the title with a light blue background
+    printf("\033[1;36;104m");
     printf("\n\t\t\tList of Passengers\t\t\n");
+    printf("\033[0m"); // Reset color to default
+
     printf("\n");
+    printf("\033[1;36;101m");
     printf("\t%4s%-14s%-15s%-16s%-5s\n", " ", "Name", "Age", "Address", "Seat");
     printf("\n");
 
@@ -540,7 +584,11 @@ void showing(const char *filename)
         if (sscanf(line, "%s%d%s%d%c", name, &age, address, &row, &col) == 5)
         {
             count++;
+
+            // Enable white color for the passenger records with a light gray background
+            printf("\033[1;97;100m");
             printf("\t%d. %-15s%-15d%-17s%d%c\n", count, name, age, address, row, col);
+            printf("\033[0m"); // Reset color to default
         }
     }
 
@@ -551,6 +599,7 @@ void showing(const char *filename)
         printf("No passenger records found.\n");
     }
 }
+
 void clearing(const char *filename)
 {
     // Clear the content of the file
@@ -621,22 +670,123 @@ void modifying(Seat ***seats)
     }
 }
 
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <conio.h>
+#include <windows.h>
+
 bool user_login()
 {
+    // Set the font to "Cascadia Code" at the beginning
+    setConsoleFont(L"Cascadia Code");
+
+    // Enable light blue background color for the banner
+    printf("\033[1;44m");
+
+    // Center align the banner with animation
+    printf("\n\n");
+    for (int i = 0; i < 25; i++)
+    {
+        if (i % 5 == 0)
+        {
+            printf("\r");
+            centerAlign("PLEASE ENTER THE PASSWORD TO CONTINUE");
+            printf("\n\n");
+        }
+        Sleep(100); // Add a small delay for animation effect
+    }
+
+    // Reset color and font style to default
+    printf("\033[0m");
+
+    // Enable light green color for the prompt
+    printf("\033[1;92m");
+
+    // Center align the prompt
+    centerAlign("Enter the password: ");
+
+    // Reset color and font style to default
+    printf("\033[0m");
+
+    // Read the password input with asterisks
     char password[20];
-    printf("Enter the password: ");
-    scanf("%s", password);
+    int i = 0;
+    while (1)
+    {
+        char c = getch(); // Read a character without echoing to the console
+        if (c == '\r' || c == '\n')
+        {
+            password[i] = '\0';
+            break;
+        }
+        else if (c == '\b')
+        {
+            if (i > 0)
+            {
+                printf("\b \b"); // Erase the last asterisk
+                i--;
+            }
+        }
+        else
+        {
+            password[i++] = c;
+            printf("*"); // Print an asterisk instead of the actual character
+        }
+    }
+
+    // Reset color and font style to default
+    printf("\033[0m");
 
     // Check if the entered password is correct
     if (strcmp(password, "password123") == 0)
     {
-        printf("\n");
-        printf("\t\t\tLOGIN SUCCESSFUL!\t\t\n");
+        // Enable green color for the login successful message
+        printf("\033[1;92m");
+
+        // Center align the login successful message with animation
+        printf("\n\n");
+        for (int i = 0; i < 20; i++)
+        {
+            if (i % 4 == 0)
+            {
+                printf("\r");
+                centerAlign("LOGIN SUCCESSFUL!");
+                printf("\n\n");
+            }
+            Sleep(200); // Add a small delay for animation effect
+        }
+
+        // Reset color and font style to default
+        printf("\033[0m");
+
         return true;
     }
     else
+    {
+        // Enable red color for the login failed message
+        printf("\033[1;91m");
+
+        // Center align the login failed message with animation
+        printf("\n\n");
+        for (int i = 0; i < 20; i++)
+        {
+            if (i % 4 == 0)
+            {
+                printf("\r");
+                centerAlign("LOGIN FAILED! PLEASE TRY AGAIN");
+                printf("\n\n");
+            }
+            Sleep(200); // Add a small delay for animation effect
+        }
+
+        // Reset color and font style to default
+        printf("\033[0m");
+
         return false;
+    }
 }
+
 void editing(Seat ***seats, const char *filename)
 {
     int fromRow;
