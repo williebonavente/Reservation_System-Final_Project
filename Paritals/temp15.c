@@ -3,7 +3,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <windows.h>
+#include <conio.h>
+#include <Windows.h>
 
 // Constants
 #define MAX_ROW 5
@@ -57,6 +58,7 @@ void modifying(Seat ***seats);
 void centerAlign(const char *text);
 void setConsoleFont(const wchar_t *fontName);
 void setConsoleFontSize(int fontSize);
+void enableVirtualTerminalProcessing();
 
 // Main function - Driver Function
 int main()
@@ -173,9 +175,11 @@ void centerAlign(const char *text)
     GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
     int consoleWidth = csbi.srWindow.Right - csbi.srWindow.Left + 1;
     int textWidth = strlen(text);
+    
+    int i;
 
     int padding = (consoleWidth - textWidth) / 2;
-    for (int i = 0; i < padding; i++)
+    for (i = 0; i < padding; i++)
     {
         putchar(' ');
     }
@@ -208,12 +212,25 @@ void setConsoleFontSize(int fontSize)
     SetCurrentConsoleFontEx(hOut, FALSE, &fontInfo);
 }
 
+void enableVirtualTerminalProcessing()
+{
+    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    DWORD dwMode = 0;
+
+    if (GetConsoleMode(hOut, &dwMode))
+    {
+        dwMode |= 0x0004; // ENABLE_VIRTUAL_TERMINAL_PROCESSING
+        SetConsoleMode(hOut, dwMode);
+    }
+}
+
 void disp_menu()
 {
     HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
     DWORD dwMode = 0;
     GetConsoleMode(hOut, &dwMode);
-    SetConsoleMode(hOut, dwMode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+    
+    enableVirtualTerminalProcessing();
 
     // Set the font to "Big Money-ne" at the beginning
     setConsoleFont(L"Big Money-ne");
@@ -223,10 +240,10 @@ void disp_menu()
 
     // Enable light green color for the title
     printf("\033[1;92m");
-
-    printf("\n\t\t=============================================================\n");
-    centerAlign("WELCOME TO STAIRWAY TO HEAVEN AIRLINE");
-    printf("\n\t\t=============================================================\n");
+	printf("\n\n");
+    printf("\t\t\t\t=============================================================\n");
+    centerAlign("WELCOME TO STAIRCASE TO PARADISE AIRLINE");
+    printf("\n\t\t\t\t=============================================================\n");
     printf("\n");
 
     // Reset color and font size to default
@@ -234,15 +251,14 @@ void disp_menu()
 
     // Enable colors
     printf("\033[1;36;104m");
-    printf("\t\t\t\t\tMAIN MENU\n\n");
+    printf("\t\t\t\t\t\t\tMAIN MENU\n\n");
     printf("\033[0m");
-
-    printf("\t\t\t   [%s1%s] Display the Available Seats\n", "\033[1;33m", "\033[0m"); // Yellow color for the option number
-    printf("\t\t\t   [%s2%s] Add Passenger\n", "\033[1;33m", "\033[0m");
-    printf("\t\t\t   [%s3%s] Edit Seat Number\n", "\033[1;33m", "\033[0m");
-    printf("\t\t\t   [%s4%s] Cancel Reservation\n", "\033[1;33m", "\033[0m");
-    printf("\t\t\t   [%s5%s] Display the List of Passengers\n", "\033[1;33m", "\033[0m");
-    printf("\t\t\t   [%s6%s] EXIT\n", "\033[1;33m", "\033[0m");
+    printf("\t\t\t\t\t   [%s1%s] Display the Available Seats\n", "\033[1;33m", "\033[0m"); // Yellow
+    printf("\t\t\t\t\t   [%s2%s] Add Passenger\n", "\033[1;33m", "\033[0m");
+    printf("\t\t\t\t\t   [%s3%s] Edit Seat Number\n", "\033[1;33m", "\033[0m");
+    printf("\t\t\t\t\t   [%s4%s] Cancel Reservation\n", "\033[1;33m", "\033[0m");
+    printf("\t\t\t\t\t   [%s5%s] Display the List of Passengers\n", "\033[1;33m", "\033[0m");
+    printf("\t\t\t\t\t   [%s6%s] EXIT\n", "\033[1;33m", "\033[0m");
 
     // Reset color and font size to default
     printf("\033[0m");
@@ -276,7 +292,7 @@ void inp_filename(char *filename)
     HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
     DWORD dwMode = 0;
     GetConsoleMode(hOut, &dwMode);
-    SetConsoleMode(hOut, dwMode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+    enableVirtualTerminalProcessing();
 
     // Set the font to "Cascadia Code" at the beginning
     setConsoleFont(L"Cascadia Code");
@@ -301,11 +317,13 @@ void inp_filename(char *filename)
 
 void init_sts(Seat ***seats)
 {
+	
+	int i, j;
     *seats = (Seat **)malloc(MAX_ROW * sizeof(Seat *));
-    for (int i = 0; i < MAX_ROW; i++)
+    for (i = 0; i < MAX_ROW; i++)
     {
         (*seats)[i] = (Seat *)malloc(MAX_COL * sizeof(Seat));
-        for (int j = 0; j < MAX_COL; j++)
+        for (j = 0; j < MAX_COL; j++)
         {
             (*seats)[i][j].passenger.assigned = false;
         }
@@ -314,8 +332,9 @@ void init_sts(Seat ***seats)
 void free_sts(Seat ***seats)
 
 {
+	int i;
     // Free dynamically allocated memory for seats
-    for (int i = 0; i < MAX_ROW; i++)
+    for (i = 0; i < MAX_ROW; i++)
     {
         free((*seats)[i]);
     }
@@ -387,7 +406,7 @@ void add_pass(Seat ***seats, const char *filename)
         printf("Enter passenger address (or press C to cancel): ");
         if (scanf(" %[^\n]", address) == 1)
         {
-            if (address[0] == 'C' || address[0] == 'c')
+            if ( strcmp(address, "C") == 0 || strcmp(address, "c") == 0)
             {
                 printf("Passenger addition canceled.\n");
                 return; // Exit the function without adding the passenger
@@ -408,13 +427,14 @@ void add_pass(Seat ***seats, const char *filename)
 
                 // Save the seat assignment to a file
                 clearScn();
-                assigning(seats, name, age, address, row, col);
-                printf("Seat assigned successfully.\n");
-                printf("Name: %s\n", name);
-                printf("Age: %d\n", age);
-                printf("Address: %s\n", address);
-                printf("Seat: %d%c\n", row, col);
+                displaying((const Seat **)*seats);
+                printf("SEAT ASSIGNED SUCCESSFULLY.\n");
+                printf("NAME: %s\n",name); 
+                printf("AGE: %d\n",age); 
+                printf("ADDRESS: %s\n ",address);
+                printf("\n");  
                 appending(filename, name, age, address, row, col);
+                
             }
             else
             {
@@ -450,10 +470,12 @@ void writing(const char *filename, Seat ***seats)
         printf("Error opening file for writing.\n");
         return;
     }
+    
+    int i, j;
 
-    for (int i = 0; i < MAX_ROW; i++)
+    for (i = 0; i < MAX_ROW; i++)
     {
-        for (int j = 0; j < MAX_COL; j++)
+        for (j = 0; j < MAX_COL; j++)
         {
             if ((*seats)[i][j].passenger.assigned)
             {
@@ -517,11 +539,10 @@ void displaying(const Seat **seats)
 
     // Set the title banner color to cyan
     printf("\033[1;36m");
-
     printf("\n\n");
-    printf("\t\t       ---------------------------------\n");
+    printf("\t\t\t\t---------------------------------\n");
     printf("%*s%s\n", paddingHeader, "", "Seat Map Availability");
-    printf("\t\t       ---------------------------------\n");
+    printf("\t\t\t\t---------------------------------\n");
 
     // Set the letters' color to light green
     printf("\033[1;92m");
@@ -529,38 +550,36 @@ void displaying(const Seat **seats)
     // Calculate the number of spaces needed to center the seat map
     int paddingSeatMap = (terminalWidth - seatMapWidth) / 2;
 
-    for (int i = 0; i < MAX_ROW; i++)
+    int i, j;
+    for (i = 0; i < MAX_ROW; i++)
     {
         // Set the numbers' color to white
         printf("\033[1;97m");
-        printf("%*s%d", paddingSeatMap, " ", i + 1);
-
+        printf("%*d", paddingSeatMap, i + 1);
         // Reset the color to light green
         printf("\033[1;92m");
-
-        for (int j = 0; j < MAX_COL; j++)
+        for (j = 0; j < MAX_COL; j++)
         {
             if (seats[i][j].passenger.assigned)
             {
                 // Change the color to bright red for occupied seats
                 printf("\033[1;91m");
-                printf("      X ");
+                printf(" X ");
             }
             else
             {
-                printf("      %c ", 'A' + j);
+                printf("%3c", 'A' + j);
             }
-
             // Reset the color to light green
             printf("\033[1;92m");
         }
         printf("\n%*s---------------------------------\n", paddingSeatMap, "");
     }
     printf("\n");
-
     // Reset the color to default
     printf("\033[0m");
 }
+
 
 void showing(const char *filename)
 {
@@ -684,12 +703,6 @@ void modifying(Seat ***seats)
     }
 }
 
-#include <stdio.h>
-#include <string.h>
-#include <stdbool.h>
-#include <conio.h>
-#include <windows.h>
-
 bool user_login()
 {
     // Set the font to "Cascadia Code" at the beginning
@@ -700,7 +713,8 @@ bool user_login()
 
     // Center align the banner with animation
     printf("\n\n");
-    for (int i = 0; i < 25; i++)
+    int i;
+    for (i = 0; i < 25; i++)
     {
         if (i % 5 == 0)
         {
@@ -725,7 +739,7 @@ bool user_login()
 
     // Read the password input with asterisks
     char password[20];
-    int i = 0;
+    i = 0;
     while (1)
     {
         char c = getch(); // Read a character without echoing to the console
@@ -760,7 +774,7 @@ bool user_login()
 
         // Center align the login successful message with animation
         printf("\n\n");
-        for (int i = 0; i < 20; i++)
+        for (i = 0; i < 20; i++)
         {
             if (i % 4 == 0)
             {
@@ -783,7 +797,9 @@ bool user_login()
 
         // Center align the login failed message with animation
         printf("\n\n");
-        for (int i = 0; i < 20; i++)
+        
+        int i;
+        for (i = 0; i < 20; i++)
         {
             if (i % 4 == 0)
             {
