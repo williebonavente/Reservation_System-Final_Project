@@ -4,3 +4,5 @@ Arnie	51	Roosevelt	2B
 Dogma	23	Albania	2D
 Carlos	29	Sta.Messy	5D
 Bernie	81		Vermont		5A
+Chester	29		California		4D
+Bennington	49		Yorktown		5C
