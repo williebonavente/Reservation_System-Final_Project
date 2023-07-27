@@ -242,7 +242,7 @@ void disp_menu()
     printf("\033[1;92m");
 	printf("\n\n");
     printf("\t\t\t\t=============================================================\n");
-    centerAlign("WELCOME TO STAIRCASE TO PARADISE AIRLINE");
+    centerAlign("WELCOME TO STAIRWAY TO HEAVEN AIRLINE");
     printf("\n\t\t\t\t=============================================================\n");
     printf("\n");
 
@@ -253,7 +253,7 @@ void disp_menu()
     printf("\033[1;36;104m");
     printf("\t\t\t\t\t\t\tMAIN MENU\n\n");
     printf("\033[0m");
-    printf("\t\t\t\t\t   [%s1%s] Display the Available Seats\n", "\033[1;33m", "\033[0m"); // Yellow
+    printf("\t\t\t\t\t   [%s1%s] Display the Available Seats\n", "\033[1;33m", "\033[0m"); // Yellow color for the option number
     printf("\t\t\t\t\t   [%s2%s] Add Passenger\n", "\033[1;33m", "\033[0m");
     printf("\t\t\t\t\t   [%s3%s] Edit Seat Number\n", "\033[1;33m", "\033[0m");
     printf("\t\t\t\t\t   [%s4%s] Cancel Reservation\n", "\033[1;33m", "\033[0m");
@@ -406,7 +406,7 @@ void add_pass(Seat ***seats, const char *filename)
         printf("Enter passenger address (or press C to cancel): ");
         if (scanf(" %[^\n]", address) == 1)
         {
-            if ( strcmp(address, "C") == 0 || strcmp(address, "c") == 0)
+            if (strcmp(address, "C") == 0 || strcmp(address, "c") == 0)
             {
                 printf("Passenger addition canceled.\n");
                 return; // Exit the function without adding the passenger
@@ -428,11 +428,16 @@ void add_pass(Seat ***seats, const char *filename)
                 // Save the seat assignment to a file
                 clearScn();
                 displaying((const Seat **)*seats);
-                printf("SEAT ASSIGNED SUCCESSFULLY.\n");
-                printf("NAME: %s\n",name); 
-                printf("AGE: %d\n",age); 
-                printf("ADDRESS: %s\n ",address);
-                printf("\n");  
+                assigning(seats, name, age, address, row, col);
+                centerAlign("SEAT ASSIGNED SUCESSFULLY.\n");
+                centerAlign("\tNAME: ");
+                printf("%s\n", name);
+				centerAlign("AGE: ");
+                printf("%d\n", age);
+				centerAlign("\tADDRESS: ");
+                printf("%s\n", address);
+				centerAlign("\tSEAT: ");
+                printf("%d%c\n", row, col);
                 appending(filename, name, age, address, row, col);
                 
             }
@@ -539,47 +544,51 @@ void displaying(const Seat **seats)
 
     // Set the title banner color to cyan
     printf("\033[1;36m");
+
     printf("\n\n");
-    printf("\t\t\t\t---------------------------------\n");
+    printf("\t\t       ---------------------------------\n");
     printf("%*s%s\n", paddingHeader, "", "Seat Map Availability");
-    printf("\t\t\t\t---------------------------------\n");
+    printf("\t\t       ---------------------------------\n");
 
     // Set the letters' color to light green
     printf("\033[1;92m");
 
     // Calculate the number of spaces needed to center the seat map
     int paddingSeatMap = (terminalWidth - seatMapWidth) / 2;
-
-    int i, j;
+	int i, j;
+	
     for (i = 0; i < MAX_ROW; i++)
     {
         // Set the numbers' color to white
         printf("\033[1;97m");
-        printf("%*d", paddingSeatMap, i + 1);
+        printf("%*s%d", paddingSeatMap, " ", i + 1);
+
         // Reset the color to light green
         printf("\033[1;92m");
+
         for (j = 0; j < MAX_COL; j++)
         {
             if (seats[i][j].passenger.assigned)
             {
                 // Change the color to bright red for occupied seats
                 printf("\033[1;91m");
-                printf(" X ");
+                printf("      X ");
             }
             else
             {
-                printf("%3c", 'A' + j);
+                printf("      %c ", 'A' + j);
             }
+
             // Reset the color to light green
             printf("\033[1;92m");
         }
         printf("\n%*s---------------------------------\n", paddingSeatMap, "");
     }
     printf("\n");
+
     // Reset the color to default
     printf("\033[0m");
 }
-
 
 void showing(const char *filename)
 {
